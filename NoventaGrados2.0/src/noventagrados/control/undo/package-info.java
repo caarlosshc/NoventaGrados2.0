@@ -1,1 +1,1 @@
-package noventagrados.control.undo; //Paquete de mierda
+package noventagrados.control.undo; //Paquete de deshacer
