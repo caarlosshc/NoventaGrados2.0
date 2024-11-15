@@ -3,14 +3,14 @@ package noventagrados.control.undo;
 import java.util.Date;
 
 public abstract class MecanismoDeDeshacerAbstracto implements MecanismoDeDeshacer {
-    protected Date fechaInicio;
+    private final Date fechaInicio;
 
-    public MecanismoDeDeshacerAbstracto(Date fechaInicio) {
-        this.fechaInicio = fechaInicio != null ? fechaInicio : new Date();
+    public MecanismoDeDeshacerAbstracto(Date fecha) {
+        this.fechaInicio = fecha != null ? new Date(fecha.getTime()) : new Date();
     }
 
     @Override
     public Date obtenerFechaInicio() {
-        return fechaInicio;
+        return new Date(fechaInicio.getTime());
     }
 }

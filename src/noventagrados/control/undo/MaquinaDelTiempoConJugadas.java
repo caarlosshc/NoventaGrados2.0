@@ -3,32 +3,32 @@ package noventagrados.control.undo;
 import noventagrados.control.Arbitro;
 import noventagrados.modelo.Jugada;
 import noventagrados.modelo.Tablero;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class MaquinaDelTiempoConJugadas extends MecanismoDeDeshacerAbstracto {
-    private List<Jugada> historialJugadas;
-    private Arbitro arbitroInicial;
+    private final List<Jugada> historialJugadas;
 
     public MaquinaDelTiempoConJugadas(Date fecha) {
         super(fecha);
         this.historialJugadas = new ArrayList<>();
-        
-        // Inicializar el árbitro en su estado inicial
-        Tablero tableroInicial = new Tablero(); // Crear un nuevo tablero vacío
-        this.arbitroInicial = new Arbitro(tableroInicial); // Crear un nuevo árbitro con el tablero
-        this.arbitroInicial.colocarPiezasConfiguracionInicial(); // Colocar piezas en la configuración inicial
     }
 
     @Override
     public Arbitro consultarArbitroActual() {
-        // Crear un clon del árbitro inicial y aplicar todas las jugadas
-        Arbitro arbitro = arbitroInicial.clonar();
+        // Crear un tablero inicial y luego un árbitro usando ese tablero
+        Tablero tableroInicial = new Tablero(); // Crear el tablero
+        Arbitro arbitro = new Arbitro(tableroInicial); // Iniciar el árbitro con el tablero inicial
+        arbitro.colocarPiezasConfiguracionInicial(); // Colocar las piezas en la configuración inicial
+
+        // Aplicar cada jugada en el historial para reconstruir el estado actual
         for (Jugada jugada : historialJugadas) {
-            arbitro.empujar(jugada);  // Aplicar cada jugada
-            arbitro.cambiarTurno();   // Cambiar el turno después de cada jugada
+            arbitro.empujar(jugada); // Aplica cada jugada en orden
+            arbitro.cambiarTurno(); // Cambia el turno después de cada jugada
         }
+
         return arbitro;
     }
 
@@ -39,13 +39,17 @@ public class MaquinaDelTiempoConJugadas extends MecanismoDeDeshacerAbstracto {
 
     @Override
     public void deshacerJugada() {
+        // Remover la última jugada del historial si existe
         if (!historialJugadas.isEmpty()) {
-            historialJugadas.remove(historialJugadas.size() - 1); // Quitar la última jugada
+            historialJugadas.remove(historialJugadas.size() - 1);
         }
     }
 
     @Override
     public void hacerJugada(Jugada jugada) {
-        historialJugadas.add(jugada); // Añadir la jugada al historial
+        // Añadir una nueva jugada al historial si no es nula
+        if (jugada != null) {
+            historialJugadas.add(jugada);
+        }
     }
 }
