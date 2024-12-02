@@ -1,0 +1,26 @@
+PRÁCTICA OBLIGATORIA 1C NOVENTAGRADOS 1.0 (Fecha de Entrega:15-11-2024)
+
+Alumnos que hemos realizado la entrega:
+
+	1. Carlos De La Huerga Cenador (cdc1010@alu.ubu.es)
+	2. Carmen Minguela Zamarro (cmz1002@alu.ubu.es)
+
+
+
+Consideraciones oportunas:
+
+En todas las clases hemos puesto los métodos públicos que se ofrecen el guion de la práctica NoventaGrados1.0 y a su vez en ellas hemos implementado los paquetes necesarios para cada clase y el buen uso de las mismas.
+En la clase arbitro.java hemos creado un método privado llamado trasladarPieza para controlar el empuje de las piezas que hay en línea. 
+
+PRÁCTICA OBLIGATORIA 1C NOVENTAGRADOS 2.0 (Fecha de Entrega:03-12-2024)
+
+Alumnos que hemos realizado la entrega:
+
+	1. Carlos De La Huerga Cenador (cdc1010@alu.ubu.es)
+	2. Carmen Minguela Zamarro (cmz1002@alu.ubu.es)
+
+
+
+Consideraciones oportunas:
+
+Se ha tomado en cuenta la retroalimentación de la primera práctica, tanto en la clase Arbitro.java y TableroConsultor.java. Y hemos creado aparte de lo pedido un ejecutable para el mecanismo de arbitro y el mecanismo de jugada. No hemos creado ningún método privado en los mecanismos de deshacer solo hemos utilizado lo dado en el enunciado de esta práctica.
