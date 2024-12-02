@@ -11,12 +11,41 @@ import noventagrados.util.Sentido;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Clase: Arbitro
+ *
+ * Representa el árbitro del juego noventagrados, encargado de gestionar el
+ * estado del juego, las reglas y la lógica de movimientos.
+ *
+ * @author <a href="mailto:cmz1002@alu.ubu.es">Carmen Minguela Zamarro</a>
+ * @author <a href="mailto:cdc1010@alu.ubu.es">Carlos De La Huerga Cenador</a>
+ * @version 1.0
+ */
 public class Arbitro {
 
+	/**
+	 * El tablero del juego.
+	 */
 	private Tablero tablero;
+
+	/**
+	 * La caja de piezas capturadas del jugador blanco.
+	 */
 	private Caja cajaBlanca;
+
+	/**
+	 * La caja de piezas capturadas del jugador negro.
+	 */
 	private Caja cajaNegra;
+
+	/**
+	 * El turno actual del juego.
+	 */
 	private Color turnoActual;
+
+	/**
+	 * El número de la jugada actual.
+	 */
 	private int numeroJugada;
 
 	/**
@@ -25,7 +54,7 @@ public class Arbitro {
 	 * color, el número de jugada y el turno actual.
 	 *
 	 * @param tablero el tablero inicial del juego; si es null, se crea un tablero
-	 *                nuevo.
+	 *                nuevo
 	 */
 	public Arbitro(Tablero tablero) {
 		this.tablero = (tablero != null) ? tablero : new Tablero();
@@ -36,7 +65,7 @@ public class Arbitro {
 	}
 
 	/**
-	 * Cambia el turno actual al otro color.
+	 * Cambia el turno actual al otro jugador.
 	 */
 	public void cambiarTurno() {
 		if (turnoActual == Color.BLANCO) {
@@ -47,7 +76,9 @@ public class Arbitro {
 	}
 
 	/**
-	 * Clona el árbitro actual, creando una copia profunda.
+	 * Crea y devuelve una copia profunda del árbitro actual.
+	 *
+	 * @return una nueva instancia de Arbitro que es una copia del actual
 	 */
 	public Arbitro clonar() {
 		Arbitro clon = new Arbitro(this.tablero.clonar());
@@ -61,6 +92,10 @@ public class Arbitro {
 	/**
 	 * Coloca las piezas dadas en las coordenadas especificadas y establece el turno
 	 * actual.
+	 *
+	 * @param piezas      lista de piezas a colocar
+	 * @param coordenadas lista de coordenadas correspondientes a las piezas
+	 * @param turnoActual el turno actual del juego
 	 */
 	public void colocarPiezas(List<Pieza> piezas, List<Coordenada> coordenadas, Color turnoActual) {
 		if (piezas != null && coordenadas != null && piezas.size() == coordenadas.size()) {
@@ -96,6 +131,9 @@ public class Arbitro {
 
 	/**
 	 * Consulta la caja de piezas capturadas del color especificado.
+	 *
+	 * @param color el color del jugador
+	 * @return la caja de piezas capturadas del jugador especificado
 	 */
 	public Caja consultarCaja(Color color) {
 		return (color == Color.BLANCO) ? cajaBlanca : cajaNegra;
@@ -103,6 +141,8 @@ public class Arbitro {
 
 	/**
 	 * Consulta el número actual de la jugada.
+	 *
+	 * @return el número de la jugada actual
 	 */
 	public int consultarNumeroJugada() {
 		return numeroJugada;
@@ -110,6 +150,8 @@ public class Arbitro {
 
 	/**
 	 * Devuelve una copia del tablero actual.
+	 *
+	 * @return una copia del tablero
 	 */
 	public Tablero consultarTablero() {
 		return tablero.clonar();
@@ -117,6 +159,8 @@ public class Arbitro {
 
 	/**
 	 * Consulta el turno actual.
+	 *
+	 * @return el color del jugador que tiene el turno actual
 	 */
 	public Color consultarTurno() {
 		return turnoActual;
@@ -124,70 +168,93 @@ public class Arbitro {
 
 	/**
 	 * Consulta el turno del jugador ganador si la partida ha finalizado.
+	 *
+	 * @return el color del jugador ganador, o null si es empate o la partida no ha
+	 *         finalizado
 	 */
 	public Color consultarTurnoGanador() {
-	    TableroConsultor<Tablero> tableroConsultor = new TableroConsultor<>(tablero);
+		if (!estaFinalizadaPartida()) {
+			return null;
+		}
 
-	    // Verifica si la partida ha finalizado
-	    if (estaFinalizadaPartida()) {
-	        boolean reinaBlancaEnCentro = tableroConsultor.estaReinaEnElCentro(Color.BLANCO);
-	        boolean reinaNegraEnCentro = tableroConsultor.estaReinaEnElCentro(Color.NEGRO);
-	        boolean hayReinaBlanca = tableroConsultor.hayReina(Color.BLANCO);
-	        boolean hayReinaNegra = tableroConsultor.hayReina(Color.NEGRO);
+		TableroConsultor<Tablero> consultor = new TableroConsultor<>(tablero);
+		boolean hayReinaBlanca = consultor.hayReina(Color.BLANCO);
+		boolean hayReinaNegra = consultor.hayReina(Color.NEGRO);
+		boolean reinaBlancaEnCentro = consultor.estaReinaEnElCentro(Color.BLANCO);
+		boolean reinaNegraEnCentro = consultor.estaReinaEnElCentro(Color.NEGRO);
 
-	        // Empate si ambas reinas han sido capturadas
-	        if (!hayReinaBlanca && !hayReinaNegra) {
-	            return null;
-	        }
-	        // Gana el jugador blanco si su reina está en el centro o si la reina negra ha sido capturada
-	        if (reinaBlancaEnCentro || !hayReinaNegra) {
-	            return Color.BLANCO;
-	        }
-	        // Gana el jugador negro si su reina está en el centro o si la reina blanca ha sido capturada
-	        if (reinaNegraEnCentro || !hayReinaBlanca) {
-	            return Color.NEGRO;
-	        }
-	    }
+		Color ganador = null;
 
-	    // Retorna null si la partida no ha finalizado o si hay empate
-	    return null;
+		if ((!hayReinaBlanca && !hayReinaNegra) || (reinaBlancaEnCentro && reinaNegraEnCentro)) {
+			ganador = null; // Empate
+		} else if (reinaBlancaEnCentro || !hayReinaNegra) {
+			ganador = Color.BLANCO;
+		} else if (reinaNegraEnCentro || !hayReinaBlanca) {
+			ganador = Color.NEGRO;
+		}
+
+		return ganador;
 	}
 
 	/**
 	 * Realiza la jugada especificada, empujando las piezas en la dirección
 	 * correspondiente.
+	 *
+	 * @param jugada la jugada a realizar
 	 */
 	public void empujar(Jugada jugada) {
 		numeroJugada++;
-		TableroConsultor<Tablero> tableroConsultor = new TableroConsultor<>(tablero);
-		Celda origen = jugada.origen();
-		Celda destino = jugada.destino();
+		Pieza pieza = jugada.origen().consultarPieza();
+		Coordenada origen = jugada.origen().consultarCoordenada();
+		Coordenada destino = jugada.destino().consultarCoordenada();
+		Sentido sentido = new TableroConsultor<>(tablero).calcularSentido(origen, destino);
 
-		Coordenada coordenadaOrigen = origen.consultarCoordenada();
-		Coordenada coordenadaDestino = destino.consultarCoordenada();
-		Pieza pieza = origen.consultarPieza();
+		if (pieza == null)
+			return;
 
-		Sentido sentido = tableroConsultor.calcularSentido(coordenadaOrigen, coordenadaDestino);
-
-		if (!tablero.estaEnTablero(coordenadaDestino) && pieza != null) {
-			if (pieza.consultarColor() == Color.BLANCO) {
-				cajaBlanca.añadir(pieza);
-			} else {
-				cajaNegra.añadir(pieza);
-			}
+		if (!tablero.estaEnTablero(destino)) {
+			capturarPieza(pieza);
 		} else {
-			if (sentido.consultarDesplazamientoEnColumnas() == 0) {
-				trasladarPieza(coordenadaOrigen, coordenadaDestino, sentido, true);
-			} else if (sentido.consultarDesplazamientoEnFilas() == 0) {
-				trasladarPieza(coordenadaOrigen, coordenadaDestino, sentido, false);
-			}
+			empujarPiezas(origen, destino, sentido);
 		}
 
-		tablero.colocar(pieza, coordenadaDestino);
+		tablero.colocar(pieza, destino);
+	}
+
+	/**
+	 * Captura una pieza y la añade a la caja correspondiente.
+	 *
+	 * @param pieza la pieza a capturar
+	 */
+	private void capturarPieza(Pieza pieza) {
+		if (pieza.consultarColor() == Color.BLANCO) {
+			cajaBlanca.añadir(pieza);
+		} else {
+			cajaNegra.añadir(pieza);
+		}
+	}
+
+	/**
+	 * Empuja las piezas desde la coordenada origen hasta la coordenada destino en
+	 * el sentido dado.
+	 *
+	 * @param origen  la coordenada de origen
+	 * @param destino la coordenada de destino
+	 * @param sentido el sentido del movimiento
+	 */
+	private void empujarPiezas(Coordenada origen, Coordenada destino, Sentido sentido) {
+		if (sentido.consultarDesplazamientoEnColumnas() == 0) {
+			trasladarPiezaVertical(origen, destino, sentido);
+		} else if (sentido.consultarDesplazamientoEnFilas() == 0) {
+			trasladarPiezaHorizontal(origen, destino, sentido);
+		}
 	}
 
 	/**
 	 * Verifica si la jugada especificada es legal según las reglas del juego.
+	 *
+	 * @param jugada la jugada a verificar
+	 * @return true si el movimiento es legal, false en caso contrario
 	 */
 	public boolean esMovimientoLegal(Jugada jugada) {
 		Coordenada origen = jugada.origen().consultarCoordenada();
@@ -199,7 +266,6 @@ public class Arbitro {
 				Sentido sentido = tableroConsultor.calcularSentido(origen, destino);
 				if (sentido == null)
 					return false;
-
 				if (sentido.consultarDesplazamientoEnFilas() == 0) {
 					return tableroConsultor.consultarDistanciaEnHorizontal(origen, destino) == tableroConsultor
 							.consultarNumeroPiezasEnVertical(origen);
@@ -214,6 +280,8 @@ public class Arbitro {
 
 	/**
 	 * Verifica si la partida ha finalizado.
+	 *
+	 * @return true si la partida ha finalizado, false en caso contrario
 	 */
 	public boolean estaFinalizadaPartida() {
 		TableroConsultor<Tablero> tableroConsultor = new TableroConsultor<>(tablero);
@@ -224,36 +292,55 @@ public class Arbitro {
 
 	/**
 	 * Traslada una pieza desde la coordenada origen a la coordenada destino en el
-	 * sentido dado.
+	 * sentido dado, moviéndose verticalmente.
+	 *
+	 * @param origen  la coordenada de origen
+	 * @param destino la coordenada de destino
+	 * @param sentido el sentido del movimiento
 	 */
-	private void trasladarPieza(Coordenada origen, Coordenada destino, Sentido sentido, boolean esVertical) {
-		int posicionOrigen;
-		int posicionDestino;
-		int desplazamiento;
+	private void trasladarPiezaVertical(Coordenada origen, Coordenada destino, Sentido sentido) {
+		int posicionOrigen = origen.fila();
+		int posicionDestino = destino.fila();
+		int desplazamiento = sentido.consultarDesplazamientoEnFilas();
 		Coordenada siguienteCoordenada = origen;
 
-		if (esVertical) {
-			posicionOrigen = origen.fila();
-			posicionDestino = destino.fila();
-			desplazamiento = sentido.consultarDesplazamientoEnFilas();
-		} else {
-			posicionOrigen = origen.columna();
-			posicionDestino = destino.columna();
-			desplazamiento = sentido.consultarDesplazamientoEnColumnas();
+		while (posicionOrigen != posicionDestino) {
+			tablero.eliminarPieza(siguienteCoordenada);
+			posicionOrigen += desplazamiento;
+			siguienteCoordenada = new Coordenada(posicionOrigen, origen.columna());
+			Celda siguienteCelda = tablero.consultarCelda(siguienteCoordenada);
+			if (siguienteCelda != null && !siguienteCelda.estaVacia()) {
+				Coordenada nuevaCoordenadaDestino = new Coordenada(destino.fila() + desplazamiento, destino.columna());
+				Jugada nuevaJugada = new Jugada(siguienteCelda, new Celda(nuevaCoordenadaDestino));
+				numeroJugada--;
+				empujar(nuevaJugada);
+			}
 		}
+	}
+
+	/**
+	 * Traslada una pieza desde la coordenada origen a la coordenada destino en el
+	 * sentido dado, moviéndose horizontalmente.
+	 *
+	 * @param origen  la coordenada de origen
+	 * @param destino la coordenada de destino
+	 * @param sentido el sentido del movimiento
+	 */
+	private void trasladarPiezaHorizontal(Coordenada origen, Coordenada destino, Sentido sentido) {
+		int posicionOrigen = origen.columna();
+		int posicionDestino = destino.columna();
+		int desplazamiento = sentido.consultarDesplazamientoEnColumnas();
+		Coordenada siguienteCoordenada = origen;
 
 		while (posicionOrigen != posicionDestino) {
 			tablero.eliminarPieza(siguienteCoordenada);
 			posicionOrigen += desplazamiento;
 
-			siguienteCoordenada = esVertical ? new Coordenada(posicionOrigen, origen.columna())
-					: new Coordenada(origen.fila(), posicionOrigen);
+			siguienteCoordenada = new Coordenada(origen.fila(), posicionOrigen);
 
 			Celda siguienteCelda = tablero.consultarCelda(siguienteCoordenada);
 			if (siguienteCelda != null && !siguienteCelda.estaVacia()) {
-				Coordenada nuevaCoordenadaDestino = esVertical
-						? new Coordenada(destino.fila() + desplazamiento, destino.columna())
-						: new Coordenada(destino.fila(), destino.columna() + desplazamiento);
+				Coordenada nuevaCoordenadaDestino = new Coordenada(destino.fila(), destino.columna() + desplazamiento);
 
 				Jugada nuevaJugada = new Jugada(siguienteCelda, new Celda(nuevaCoordenadaDestino));
 				numeroJugada--;
